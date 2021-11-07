@@ -66,9 +66,10 @@ if (NOT TARGET ${TARGET_BOTAN})
 endif()
 target_sources(
     ${TARGET_BOTAN}
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}/botan_all.h
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/botan_all.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/botan_all.h
 )
 target_include_directories(
     ${TARGET_BOTAN}
