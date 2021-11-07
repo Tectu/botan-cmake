@@ -23,5 +23,8 @@ target_sources(
         main.cpp
 )
 
-target_link_libraries(${TARGET} PRIVATE Botan)
-
+target_link_libraries(
+    ${TARGET}
+    PRIVATE
+        botan
+)
