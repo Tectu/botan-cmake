@@ -1,5 +1,10 @@
-cmake_minimum_required(VERSION 3.19)
+##
+## ToDo: A better approach would be to wrap most of this into a function like botan_generate(TARGET COMPONENTS) which
+##       will create a target of name TARGET with the components COMPONENTS.
+##       This way multiple targets can get different configurations.
+##
 
+cmake_minimum_required(VERSION 3.19)
 include(FetchContent)
 
 # Find python
@@ -42,13 +47,12 @@ add_custom_command(
     COMMENT "Generating Botan amalgamation files botan_all.cpp and botan_all.h"
     COMMAND ${Python_EXECUTABLE}
         ${botan_upstream_SOURCE_DIR}/configure.py
+        --quiet
+        --cc-bin=${CMAKE_CXX_COMPILER}
+        --disable-shared
         --amalgamation
         --minimized-build
         --enable-modules=${ENABLE_MODULES_LIST}
-)
-
-add_custom_target(
-    func DEPENDS botan_all.cpp botan_all.h
 )
 
 # Heavy lifting by cmake
@@ -58,9 +62,14 @@ find_package_handle_standard_args(Botan DEFAULT_MSG Botan_VERSION_STRING)
 # Create target
 set(TARGET_BOTAN Botan)
 if (NOT TARGET ${TARGET_BOTAN})
-    add_library(${TARGET_BOTAN} INTERFACE IMPORTED)
+    add_library(${TARGET_BOTAN} STATIC)
 endif()
-add_dependencies(${TARGET_BOTAN} func)
+target_sources(
+    ${TARGET_BOTAN}
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/botan_all.cpp
+        ${CMAKE_CURRENT_BINARY_DIR}/botan_all.h
+)
 target_include_directories(
     ${TARGET_BOTAN}
     INTERFACE
