@@ -1,3 +1,21 @@
+## This module will automagically download the tarball of the specified Botan version and invoke the configure.py
+## python script to generate the amalgamation files (botan_all.cpp and botan_all.h).
+##
+## Usage:
+##   find_package(
+##       botan 2.18.2
+##       COMPONENTS
+##           system_rng
+##           argon2
+##           sha3
+##       REQUIRED
+##    )
+##
+##    target_link_libraries(
+##        MyTarget
+##        PRIVATE
+##            botan
+##    )
 ##
 ## ToDo: A better approach would be to wrap most of this into a function like botan_generate(TARGET COMPONENTS) which
 ##       will create a target of name TARGET with the components COMPONENTS.
