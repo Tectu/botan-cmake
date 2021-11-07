@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.19)
 project(botan_cmake)
 
 set(CMAKE_CXX_STANDARD 20)
