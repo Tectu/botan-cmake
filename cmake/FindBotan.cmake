@@ -4,7 +4,7 @@ include(FetchContent)
 
 # Find python
 find_package(
-    Python3
+    Python
     COMPONENTS
         Interpreter
     REQUIRED
@@ -28,19 +28,27 @@ endif()
 
 # Download the tarball
 FetchContent_Declare(
-    Botan-Upstream
+    botan_upstream
     URL ${DOWNLOAD_URL}
 )
-FetchContent_GetProperties(Botan-Upstream)
-if(NOT Botan-Upstream_POPULATED)
-    FetchContent_Populate(Botan-Upstream)
-endif()
+FetchContent_MakeAvailable(botan_upstream)
+
+# Assemble value for --enable-modules parameter of configure.py
+list(JOIN Botan_FIND_COMPONENTS "," ENABLE_MODULES_LIST)
 
 # Run the configure.py script
 add_custom_command(
     OUTPUT botan_all.cpp botan_all.h
     COMMENT "Generating Botan amalgamation files botan_all.cpp and botan_all.h"
-    COMMAND foo
+    COMMAND ${Python_EXECUTABLE}
+        ${botan_upstream_SOURCE_DIR}/configure.py
+        --amalgamation
+        --minimized-build
+        --enable-modules=${ENABLE_MODULES_LIST}
+)
+
+add_custom_target(
+    func DEPENDS botan_all.cpp botan_all.h
 )
 
 # Heavy lifting by cmake
@@ -52,9 +60,9 @@ set(TARGET_BOTAN Botan)
 if (NOT TARGET ${TARGET_BOTAN})
     add_library(${TARGET_BOTAN} INTERFACE IMPORTED)
 endif()
-target_sources(
+add_dependencies(${TARGET_BOTAN} func)
+target_include_directories(
     ${TARGET_BOTAN}
     INTERFACE
-        botan_all.cpp
-        botan_all.h
+        ${CMAKE_CURRENT_BINARY_DIR}
 )
