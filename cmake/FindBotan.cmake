@@ -60,7 +60,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Botan DEFAULT_MSG Botan_VERSION_STRING)
 
 # Create target
-set(TARGET_BOTAN Botan)
+set(TARGET_BOTAN botan)
 if (NOT TARGET ${TARGET_BOTAN})
     add_library(${TARGET_BOTAN} STATIC)
 endif()
