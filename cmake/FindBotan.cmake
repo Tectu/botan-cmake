@@ -94,3 +94,8 @@ target_include_directories(
     INTERFACE
         ${CMAKE_CURRENT_BINARY_DIR}
 )
+set_target_properties(
+    ${TARGET_BOTAN}
+    PROPERTIES
+        POSITION_INDEPENDENT_CODE ON
+)
