@@ -4,7 +4,7 @@ project(botan_cmake)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 find_package(
-    Botan 2.18.2
+    Botan 2.19.1
     COMPONENTS
         system_rng
         argon2
