@@ -10,6 +10,12 @@ Unlike other CMake integrations for Botan, this one does not simply add all the 
 Refer Botan's [The Amalgamation Build](https://botan.randombit.net/handbook/building.html#amalgamation) documentation for more information on the amalgamation build.
 
 
+# Licensing
+
+Code provided by this repository is considered to be public domain using the [Unlicense](https://unlicense.org/) license.
+However, note that Botan ships with its own licensing.
+
+
 # Usage
 
 To use this Botan CMake integration:
