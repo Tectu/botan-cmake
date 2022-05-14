@@ -7,7 +7,7 @@ Unlike other CMake integrations for Botan, this one does not simply add all the 
 2. Run Botan's python script to generate the amalgamation files `botan_all.h` and `botan_all.cpp`.
 3. Provides a CMake target to compile & link those amalgamation files.
 
-Refer Botan's [The Amalgamation Build](https://botan.randombit.net/handbook/building.html#amalgamation) documentation for more information on the amalgamation build.
+Refer to Botan's [The Amalgamation Build](https://botan.randombit.net/handbook/building.html#amalgamation) documentation for more information on the amalgamation build.
 
 
 # Licensing
@@ -21,26 +21,32 @@ However, note that Botan ships with its own licensing.
 To use this Botan CMake integration:
 1. Download/copy `cmake/FindBotan.cmake` from this repository to your local CMake project.
 2. Add that CMake script to your CMake module path (`CMAKE_MODULE_PATH`).
-3. Use `find_package()` to "include" that CMake script in your project. Specify the components as needed.
-4. Use `target_link_libraries()` to link to the generated CMake target.
-5. Include `botan_all.h` where needed.
+3. Use `find_package()` to "include" that CMake script in your project. Do not specify any components.
+4. Use the `botan_generate()` function to generate a target with specific Botan modules enabled.
+5. Use `target_link_libraries()` to link to the generated CMake target.
+6. Include `botan_all.h` where needed.
 
 An example project is provided under `/example`.
 
 Your `CMakeLists.txt`:
 ```cmake
+# Find Botan
 find_package(
     botan 2.18.2
-    COMPONENTS
-        system_rng
-        argon2
-        sha3
     REQUIRED
 )
 
+# Create target "botan_test" with modules "system_rng" and "sha3" enabled
+botan_generate(
+    botan_test
+        system_rng
+        sha3
+)
+
+# Link to generated target
 target_link_libraries(
     MyTarget
     PRIVATE
-        botan
+        botan_test
 )
 ```
