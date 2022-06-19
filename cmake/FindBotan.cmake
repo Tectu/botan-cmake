@@ -17,10 +17,6 @@
 ##            botan
 ##    )
 ##
-## ToDo: A better approach would be to wrap most of this into a function like botan_generate(TARGET COMPONENTS) which
-##       will create a target of name TARGET with the components COMPONENTS.
-##       This way multiple targets can get different configurations.
-##
 
 cmake_minimum_required(VERSION 3.19)
 include(FetchContent)
