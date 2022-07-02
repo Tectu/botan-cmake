@@ -67,7 +67,8 @@ function(botan_generate TARGET_NAME MODULES)
 
     # Determine botan compiler ID (--cc parameter of configure.py)
     set(BOTAN_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
-    if (BOTAN_COMPILER_ID STREQUAL "GNU")
+    string(TOLOWER ${BOTAN_COMPILER_ID} BOTAN_COMPILER_ID)
+    if (BOTAN_COMPILER_ID STREQUAL "gnu")
         set(BOTAN_COMPILER_ID "gcc")
     endif()
 
