@@ -65,6 +65,12 @@ function(botan_generate TARGET_NAME MODULES)
     endforeach()
     list(JOIN modules_list "," ENABLE_MODULES_LIST)
 
+    # Determine botan compiler ID (--cc parameter of configure.py)
+    set(BOTAN_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
+    if (BOTAN_COMPILER_ID STREQUAL "GNU")
+        set(BOTAN_COMPILER_ID "gcc")
+    endif()
+
     # Run the configure.py script
     add_custom_command(
         OUTPUT botan_all.cpp botan_all.h
@@ -73,6 +79,8 @@ function(botan_generate TARGET_NAME MODULES)
             ${botan_upstream_SOURCE_DIR}/configure.py
             --quiet
             --cc-bin=${CMAKE_CXX_COMPILER}
+            --cc=${BOTAN_COMPILER_ID}
+            $<$<BOOL:MINGW>:--os=mingw>
             --disable-shared
             --amalgamation
             --minimized-build
