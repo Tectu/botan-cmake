@@ -80,7 +80,7 @@ function(botan_generate TARGET_NAME MODULES)
             --quiet
             --cc-bin=${CMAKE_CXX_COMPILER}
             --cc=${BOTAN_COMPILER_ID}
-            $<$<BOOL:MINGW>:--os=mingw>
+            $<$<BOOL:${MINGW}>:--os=mingw>
             --disable-shared
             --amalgamation
             --minimized-build
