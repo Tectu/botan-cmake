@@ -23,10 +23,10 @@ include(FetchContent)
 
 # Find python
 find_package(
-        Python
-        COMPONENTS
+    Python
+    COMPONENTS
         Interpreter
-        REQUIRED
+    REQUIRED
 )
 
 # Assemble version string
@@ -37,9 +37,9 @@ set(DOWNLOAD_URL https://github.com/randombit/botan/archive/refs/tags/${Botan_VE
 
 # Just do a dummy download to see whether we can download the tarball
 file(
-        DOWNLOAD
-        ${DOWNLOAD_URL}
-        STATUS download_status
+    DOWNLOAD
+    ${DOWNLOAD_URL}
+    STATUS download_status
 )
 if (NOT download_status EQUAL 0)
     message(FATAL_ERROR "Could not download Botan tarball (status = ${download_status}): ${DOWNLOAD_URL}")
@@ -47,8 +47,8 @@ endif()
 
 # Download the tarball
 FetchContent_Declare(
-        botan_upstream
-        URL ${DOWNLOAD_URL}
+    botan_upstream
+    URL ${DOWNLOAD_URL}
 )
 FetchContent_MakeAvailable(botan_upstream)
 
@@ -80,9 +80,9 @@ function(botan_generate TARGET_NAME MODULES)
 
     # Run the configure.py script
     add_custom_command(
-            OUTPUT botan_all.cpp botan_all.h
-            COMMENT "Generating Botan amalgamation files botan_all.cpp and botan_all.h"
-            COMMAND ${Python_EXECUTABLE}
+        OUTPUT botan_all.cpp botan_all.h
+        COMMENT "Generating Botan amalgamation files botan_all.cpp and botan_all.h"
+        COMMAND ${Python_EXECUTABLE}
             ${botan_upstream_SOURCE_DIR}/configure.py
             --quiet
             --cc-bin=${CMAKE_CXX_COMPILER}
@@ -98,10 +98,10 @@ function(botan_generate TARGET_NAME MODULES)
     set(TARGET ${TARGET_NAME})
     add_library(${TARGET} STATIC)
     target_sources(
-            ${TARGET}
-            PUBLIC
+        ${TARGET}
+        PUBLIC
             ${CMAKE_CURRENT_BINARY_DIR}/botan_all.h
-            PRIVATE
+        PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}/botan_all.cpp
     )
 
@@ -113,18 +113,18 @@ function(botan_generate TARGET_NAME MODULES)
         target_include_directories(
                 ${TARGET}
                 PRIVATE
-                ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11
+                    ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11
         )
     endif()
 
     target_include_directories(
-            ${TARGET}
-            INTERFACE
+        ${TARGET}
+        INTERFACE
             ${CMAKE_CURRENT_BINARY_DIR}
     )
     set_target_properties(
-            ${TARGET}
-            PROPERTIES
+        ${TARGET}
+        PROPERTIES
             POSITION_INDEPENDENT_CODE ON
     )
 endfunction()
