@@ -63,10 +63,10 @@ function(botan_generate TARGET_NAME MODULES)
     foreach(module_index RANGE 1 ${ARGC}-2)
         list(APPEND modules_list ${ARGV${module_index}})
 
-        # Check if pkcs11 module is enabled
+        # Check if PKCS11 module is enabled
+        # Note: This is for a workaround, see further below for more details.
         if (ARGV${module_index} STREQUAL "pkcs11")
             set(PKCS11_ENABLED ON)
-            message(STATUS "PKCS11 module enabled")
         endif()
     endforeach()
     list(JOIN modules_list "," ENABLE_MODULES_LIST)
@@ -105,18 +105,6 @@ function(botan_generate TARGET_NAME MODULES)
             ${CMAKE_CURRENT_BINARY_DIR}/botan_all.cpp
     )
 
-    # Add pkcs11 headers if pkcs11 module is enabled as a workaround
-    if (PKCS11_ENABLED)
-        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11f.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11t.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-        target_include_directories(
-                ${TARGET}
-                PRIVATE
-                    ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11
-        )
-    endif()
-
     target_include_directories(
         ${TARGET}
         INTERFACE
@@ -127,4 +115,26 @@ function(botan_generate TARGET_NAME MODULES)
         PROPERTIES
             POSITION_INDEPENDENT_CODE ON
     )
+
+    #
+    # PKCS11 Workaround
+    #
+    # This section is a workaround to handle a "bug" in upstream Botan.
+    # Basically, the amalgamation build of Botan does not include the necessary PKCS11 headers when the PKCS11 module
+    # is enabled.
+    #
+    # See:
+    #   - https://github.com/randombit/botan/issues/1447
+    #   - https://github.com/randombit/botan/issues/976
+    #
+    if (PKCS11_ENABLED)
+        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11f.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11t.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        target_include_directories(
+                ${TARGET}
+                PRIVATE
+                ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11
+        )
+    endif()
 endfunction()
