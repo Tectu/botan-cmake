@@ -62,6 +62,12 @@ function(botan_generate TARGET_NAME MODULES)
     # Here, we collect those in a list and join them with a comma separator ready to be passed to the configure.py script.
     foreach(module_index RANGE 1 ${ARGC}-2)
         list(APPEND modules_list ${ARGV${module_index}})
+
+        # Check if pkcs11 module is enabled
+        if (ARGV${module_index} STREQUAL "pkcs11")
+            set(PKCS11_ENABLED ON)
+            message(STATUS "PKCS11 module enabled")
+        endif()
     endforeach()
     list(JOIN modules_list "," ENABLE_MODULES_LIST)
 
@@ -98,6 +104,19 @@ function(botan_generate TARGET_NAME MODULES)
         PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}/botan_all.cpp
     )
+
+    # Add pkcs11 headers if pkcs11 module is enabled as a workaround
+    if (PKCS11_ENABLED)
+        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11f.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11t.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        target_include_directories(
+                ${TARGET}
+                PRIVATE
+                    ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11
+        )
+    endif()
+
     target_include_directories(
         ${TARGET}
         INTERFACE
