@@ -31,28 +31,58 @@ find_package(
 
 # Policy for download timestamps
 cmake_policy(SET CMP0135 NEW)
+
 # Assemble version string
 set(Botan_VERSION_STRING ${Botan_FIND_VERSION_MAJOR}.${Botan_FIND_VERSION_MINOR}.${Botan_FIND_VERSION_PATCH})
 
 # Assemble download URL
 set(DOWNLOAD_URL https://github.com/randombit/botan/archive/refs/tags/${Botan_VERSION_STRING}.tar.gz)
 
-# Just do a dummy download to see whether we can download the tarball
-file(
-    DOWNLOAD
-    ${DOWNLOAD_URL}
-    STATUS download_status
-)
-if (NOT download_status EQUAL 0)
-    message(FATAL_ERROR "Could not download Botan tarball (status = ${download_status}): ${DOWNLOAD_URL}")
-endif()
+# Optional Botan PATH hinting
+set(Botan_PATH "" CACHE PATH "Path to Botan installation")
 
-# Download the tarball
-FetchContent_Declare(
-    botan_upstream
-    URL ${DOWNLOAD_URL}
-)
-FetchContent_MakeAvailable(botan_upstream)
+if(NOT Botan_PATH)
+    # Just do a dummy download to see whether we can download the tarball
+    file(
+        DOWNLOAD
+        ${DOWNLOAD_URL}
+        STATUS download_status
+    )
+    if (NOT download_status EQUAL 0)
+        message(FATAL_ERROR "Could not download Botan tarball (status = ${download_status}): ${DOWNLOAD_URL}")
+    endif()
+
+    # Download the tarball
+    FetchContent_Declare(
+        botan_upstream
+        URL ${DOWNLOAD_URL}
+    )
+    FetchContent_MakeAvailable(botan_upstream)
+else()
+    # User suggested a path
+    message(STATUS "Using user-suggested Botan path: ${Botan_PATH}")
+    set(botan_upstream_SOURCE_DIR ${Botan_PATH} CACHE INTERNAL "")
+
+    if(NOT EXISTS ${botan_upstream_SOURCE_DIR}/configure.py)
+        message(FATAL_ERROR "Botan path hint found, but couldn't detect the configure script at: ${botan_upstream_SOURCE_DIR}/configure.py")
+    endif()
+
+    # See if we can heuristically detect the version of botan
+    if(EXISTS ${botan_upstream_SOURCE_DIR}/news.rst)
+        file(READ ${botan_upstream_SOURCE_DIR}/news.rst BOTAN_NEWSFILE)
+        string(REGEX MATCH "[0-9]\\.[0-9]\\.[0-9]" BOTAN_REPOVERSION "${BOTAN_NEWSFILE}")
+
+        # If user didn't provide a required version
+        if(Botan_VERSION_STRING STREQUAL "..")
+            set(Botan_VERSION_STRING ${BOTAN_REPOVERSION})
+        else ()
+            # Check if the desired version matches the one provided in path hint
+            if(NOT BOTAN_REPOVERSION STREQUAL Botan_VERSION_STRING)
+                message(FATAL_ERROR "Botan version hint (${Botan_VERSION_STRING}) doesn't equal with the one found in the repository (${BOTAN_REPOVERSION})")
+            endif()
+        endif ()
+    endif()
+endif()
 
 # Heavy lifting by cmake
 include(FindPackageHandleStandardArgs)
