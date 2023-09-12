@@ -29,6 +29,8 @@ find_package(
     REQUIRED
 )
 
+# Policy for download timestamps
+cmake_policy(SET CMP0135 NEW)
 # Assemble version string
 set(Botan_VERSION_STRING ${Botan_FIND_VERSION_MAJOR}.${Botan_FIND_VERSION_MINOR}.${Botan_FIND_VERSION_PATCH})
 
