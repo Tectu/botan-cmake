@@ -42,6 +42,11 @@ set(DOWNLOAD_URL https://github.com/randombit/botan/archive/refs/tags/${Botan_VE
 set(Botan_PATH "" CACHE PATH "Path to Botan installation")
 
 if(NOT Botan_PATH)
+    # Ensure that find_package() got a version specification
+    if (NOT Botan_FIND_VERSION)
+        message(FATAL_ERROR "Cannot download Botan tarball without a version specified in find_package()")
+    endif()
+
     # Just do a dummy download to see whether we can download the tarball
     file(
         DOWNLOAD
