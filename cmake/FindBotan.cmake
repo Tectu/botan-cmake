@@ -161,8 +161,8 @@ function(botan_generate TARGET_NAME MODULES)
         file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11f.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
         file(COPY ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11/pkcs11t.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
         target_include_directories(
-                ${TARGET}
-                PRIVATE
+            ${TARGET}
+            PRIVATE
                 ${botan_upstream_SOURCE_DIR}/src/lib/prov/pkcs11
         )
     endif()
