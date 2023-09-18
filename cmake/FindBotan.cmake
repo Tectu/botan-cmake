@@ -21,6 +21,9 @@
 cmake_minimum_required(VERSION 3.19)
 include(FetchContent)
 
+# Policy for download timestamps
+cmake_policy(SET CMP0135 NEW)
+
 # Find python
 find_package(
     Python
