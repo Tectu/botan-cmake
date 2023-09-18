@@ -3,7 +3,7 @@
 This repository provides `FindBotan.cmake` which allows for easily inclusion of Botan into CMake based projects.
 
 Unlike other CMake integrations for Botan, this one does not simply add all the Botan files to a target. Instead, it does the following automagically:
-1. Download the requested version of Botan.
+1. Download the requested version of Botan (if not provided locally).
 2. Run Botan's python script to generate the amalgamation files `botan_all.h` and `botan_all.cpp`.
 3. Provides a CMake target to compile & link those amalgamation files.
 
@@ -50,3 +50,8 @@ target_link_libraries(
         botan_test
 )
 ```
+
+## Local Botan distribution
+
+By default, this CMake module will download the Botan upstream distribution tarball. If this is undesired, a path to a
+local copy of the tarball can be supplied via the `Botan_PATH` variable.
