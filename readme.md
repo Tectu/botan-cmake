@@ -32,13 +32,13 @@ Your `CMakeLists.txt`:
 ```cmake
 # Find Botan
 find_package(
-    botan 2.18.2
+    botan 3.4.0
     REQUIRED
 )
 
-# Create target "botan_test" with modules "system_rng" and "sha3" enabled
+# Create target "my_botan_target" with modules "system_rng" and "sha3" enabled
 botan_generate(
-    botan_test
+    my_botan_target
         system_rng
         sha3
 )
@@ -47,7 +47,7 @@ botan_generate(
 target_link_libraries(
     MyTarget
     PRIVATE
-        botan_test
+        my_botan_target
 )
 ```
 

@@ -1,20 +1,28 @@
 ## This module will automagically download the tarball of the specified Botan version and invoke the configure.py
 ## python script to generate the amalgamation files (botan_all.cpp and botan_all.h).
 ##
-## Usage:
-##   find_package(
-##       botan 2.18.2
-##       COMPONENTS
-##           system_rng
-##           argon2
-##           sha3
-##       REQUIRED
+## Author: Joel Bodenmann <jbo@insane.engineer>
+##
+## Example usage:
+##
+##    # Find Botan
+##    find_package(
+##        Botan 3.4.0
+##        REQUIRED
 ##    )
 ##
+##    # Create target "my_botan_target" with modules "system_rng" and "sha3" enabled
+##    botan_generate(
+##        my_botan_target
+##            system_rng
+##            sha3
+##    )
+##
+##    # Link to generated target
 ##    target_link_libraries(
 ##        MyTarget
 ##        PRIVATE
-##            botan
+##            my_botan_target
 ##    )
 ##
 
