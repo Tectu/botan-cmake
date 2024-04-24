@@ -149,7 +149,6 @@ function(botan_generate TARGET_NAME MODULES)
         PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}/botan_all.cpp
     )
-
     target_include_directories(
         ${TARGET}
         INTERFACE
