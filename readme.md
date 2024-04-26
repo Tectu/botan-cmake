@@ -1,11 +1,11 @@
 # Overview
 
-This repository provides `FindBotan.cmake` which allows for easily inclusion of Botan into CMake based projects.
+This repository provides `FindBotan.cmake` which allows for easy inclusion of Botan into CMake based projects.
 
 Unlike other CMake integrations for Botan, this one does not simply add all the Botan files to a target. Instead, it does the following automagically:
 1. Download the requested version of Botan (if not provided locally).
 2. Run Botan's python script to generate the amalgamation files `botan_all.h` and `botan_all.cpp`.
-3. Provides a CMake target to compile & link those amalgamation files.
+3. Provide a CMake target to compile & link those amalgamation files.
 
 Refer to Botan's [The Amalgamation Build](https://botan.randombit.net/handbook/building.html#amalgamation) documentation for more information on the amalgamation build.
 
@@ -37,6 +37,7 @@ find_package(
 )
 
 # Create target "my_botan_target" with modules "system_rng" and "sha3" enabled
+# Any Botan module can be listed here
 botan_generate(
     my_botan_target
         system_rng

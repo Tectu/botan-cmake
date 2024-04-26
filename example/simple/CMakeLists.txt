@@ -6,6 +6,7 @@ find_package(
 )
 
 # Generate target 'botan_test' with specific modules
+# Any Botan module can be listed here
 botan_generate(
     botan_test
         system_rng
