@@ -142,6 +142,11 @@ function(botan_generate TARGET_NAME MODULES)
     # Create target
     set(TARGET ${TARGET_NAME})
     add_library(${TARGET} STATIC)
+    target_compile_features(
+        ${TARGET}
+        PUBLIC
+            cxx_std_20  # ToDo: Only necessary for Botan >= 3.0.0
+    )
     target_sources(
         ${TARGET}
         PUBLIC
