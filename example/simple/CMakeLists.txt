@@ -1,7 +1,7 @@
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../cmake)
 
 find_package(
-    Botan 3.1.1
+    Botan 3.4.0
     REQUIRED
 )
 
@@ -25,4 +25,5 @@ target_link_libraries(
     ${TARGET}
     PRIVATE
         botan_test
+        pthread     # ToDo: Should we move this to botan_generate() ?
 )
