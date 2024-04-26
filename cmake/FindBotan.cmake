@@ -159,6 +159,11 @@ function(botan_generate TARGET_NAME MODULES)
         INTERFACE
             ${CMAKE_CURRENT_BINARY_DIR}
     )
+    target_link_libraries(
+        ${TARGET}
+        PRIVATE
+            $<$<NOT:$<BOOL:${MSVC}>>:pthread>
+    )
     set_target_properties(
         ${TARGET}
         PROPERTIES

@@ -25,5 +25,4 @@ target_link_libraries(
     ${TARGET}
     PRIVATE
         botan_test
-        pthread     # ToDo: Should we move this to botan_generate() ?
 )
