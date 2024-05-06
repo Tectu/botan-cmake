@@ -102,6 +102,9 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Botan DEFAULT_MSG Botan_VERSION_STRING)
 
 ## Function to get the list of all available Botan modules
+##
+## This function essentially executes   configure.py --list-modules  on Botan's configuration script which returns a
+## list of all available modules and parses those into a CMake list (LIST_OUT).
 function(botan_all_available_modules LIST_OUT)
     # Get available modules from botan python script
     execute_process(
