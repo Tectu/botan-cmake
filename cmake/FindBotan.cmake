@@ -101,20 +101,51 @@ endif()
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Botan DEFAULT_MSG Botan_VERSION_STRING)
 
-## Function to generate a target named 'TARGET_NAME' with specific Botan modules enabled.
-function(botan_generate TARGET_NAME MODULES)
-    # The last N arguments are considered to be the modules list.
-    # Here, we collect those in a list and join them with a comma separator ready to be passed to the configure.py script.
-    foreach(module_index RANGE 1 ${ARGC}-2)
-        list(APPEND modules_list ${ARGV${module_index}})
+## Function to get the list of all available Botan modules
+function(botan_all_available_modules LIST_OUT)
+    # Get available modules from botan python script
+    execute_process(
+        COMMAND ${Python_EXECUTABLE} ${botan_upstream_SOURCE_DIR}/configure.py --list-modules
+        OUTPUT_VARIABLE ALL_MODULES_LIST
+    )
 
-        # Check if PKCS11 module is enabled
-        # Note: This is for a workaround, see further below for more details.
-        if (ARGV${module_index} STREQUAL "pkcs11")
-            set(PKCS11_ENABLED ON)
-        endif()
-    endforeach()
+    # Transform into list
+    string(REPLACE "\n" ";" ALL_MODULES_LIST "${ALL_MODULES_LIST}")
+
+    # Drop last element (empty)
+    # ToDo: Find a nicer way of doing this
+    list(POP_BACK ALL_MODULES_LIST)
+
+    # Set output
+    set(${LIST_OUT} ${ALL_MODULES_LIST} PARENT_SCOPE)
+endfunction()
+
+## Function to generate a target named 'TARGET_NAME' with specific Botan modules enabled.
+##
+## If ARGC == 1, all available Botan modules will be added to the amalgamation output.
+## If ARGC >= 2, only the specified modules will be added to the amalgamation output.
+function(botan_generate TARGET_NAME)
+    # Assemble list of Botan modules that should be enabled in the amalgamation output.
+    # Use either only specified Botan modules (${ARGC} >= 2) or all available Botan modules (${ARGC} == 1)
+    if (${ARGC} EQUAL 1)
+        botan_all_available_modules(modules_list)
+    else()
+        # The last N arguments are considered to be the modules list.
+        # Here, we collect those in a list and join them with a comma separator ready to be passed to the configure.py script.
+        foreach(module_index RANGE 1 ${ARGC}-2)
+            list(APPEND modules_list ${ARGV${module_index}})
+
+            # Check if PKCS11 module is enabled
+            # Note: This is for a workaround, see further below for more details.
+            if (ARGV${module_index} STREQUAL "pkcs11")
+                set(PKCS11_ENABLED ON)
+            endif()
+        endforeach()
+    endif()
     list(JOIN modules_list "," ENABLE_MODULES_LIST)
+
+    # Debug output
+    message(STATUS "Botan amalgamation modules for target \"${TARGET_NAME}\": ${modules_list}")
 
     # Determine botan compiler ID (--cc parameter of configure.py)
     set(BOTAN_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
